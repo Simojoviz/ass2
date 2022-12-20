@@ -1,5 +1,4 @@
 from sklearn.base import BaseEstimator
-from sklearn.neighbors import KNeighborsClassifier
 import numpy as np
 import statistics
 
@@ -13,13 +12,9 @@ class knn(BaseEstimator):
         self.y_train = y_train.to_numpy()
 
     def __supp(self, x):
-        distances = []  
 
-        for i,d in enumerate([np.linalg.norm(t - x) for t in self.X_train]):
-            distances.append((self.y_train[i] , d))
-
-
-        neighbors_y = [ n[0] for n in sorted(list(distances),key= lambda p: p[1])[:self.k] ]
+        distances = np.array([np.linalg.norm(t - x) for t in self.X_train])
+        neighbors_y = np.array([ self.y_train[i] for i in np.argsort(distances)[:self.k]])
 
         return statistics.mode(neighbors_y)
 
@@ -28,8 +23,11 @@ class knn(BaseEstimator):
     def predict(self, X_test):
         X_test = X_test.to_numpy()
         predict = np.array([])
+        i = 0
 
         for x in X_test:
+            i += 1
             predict = np.append(predict, self.__supp(x))
-
+            #if (i % 100 == 0):
+            #    print(f"{i} iteration")
         return predict
