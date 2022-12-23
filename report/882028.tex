@@ -174,6 +174,31 @@ selected to create the associated decision tree.
 
 \subsection{k-nearest neighbors (k-NN)}
 
+Let's start by defining $P$ as the probability that a vector fall into a region $\mathcal{R}$
+$$
+    P=\int_{\mathcal{R}} p(x) d x
+$$
+if we assume that $\mathcal{R}$ is so small that $p(x)$ doesn't vary so much inside it,
+we can redefine $P$ as
+$$
+    P=\int_{\mathcal{R}} p(x) d x \approx p(x) \int_{\mathcal{R}} d x=p(x)|\mathcal{R}|
+$$
+after a Monte Carlo estimation of the probability $P = \frac{k}{n}$ as the proportion
+of vectors ($k$) of the sample ($n$) fall within $\mathcal{R}$ the have that
+$$
+    p(x) = \frac{k/n}{|\mathcal{R}|}
+$$
+Now assume k to be constant and enlarge the window until we find enough samples, if
+we let the number of neighbors $k(n)$  grows to innfinity more slowly than n
+$$
+    \lim _{n \rightarrow \infty} \frac{k(n)}{n}=0
+$$
+we have that for each point the nearest neighbor estimator converges in
+probability to the real density.
+
+Having said that, the k-nearest neighbors classifier to classify a new point looks for
+k nearest neighbors on the training set and classify the new point according to the 
+majority of the neighbors.
 \section{Implementation}
 
 \end{document}
