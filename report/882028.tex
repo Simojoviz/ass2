@@ -5,6 +5,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage{float}
 \usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
 
 \DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
 \DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
@@ -136,7 +139,7 @@ $$
     \phi(x_i) \cdot \phi(x_j)  = K(x_i, x_j)
 $$
 we can simply define the function 
-$K : X \times X \to\mathbb{R}, \{x_i,\dots x_n\} \subseteq X$, such function is 
+$K : X \times X \to\mathbb{R}, \{x_1,\dots x_n\} \subseteq X$, such function is 
 called \textbf{kernel}.
 
 There are various choises for kernels:
@@ -172,6 +175,38 @@ selected to create the associated decision tree.
 
 \subsection{Naive Bayes classifier}
 
+The Naive Bayes classifier have a \textbf{generative} approach instead of a 
+\textbf{discriminative} one,
+so this classifier given a training set tries to create models that represents the
+various classes.
+ 
+To classify a new data we match the date with all the models then see which model 
+represents better the new data.
+
+In more formal therms, \textbf{discriminative} algorithms try to learn $p(y|x)$, 
+instead \textbf{generative} algorithms try to model $p(x|y)$ and $p(y)$.
+
+With a Naive Bayes classifier to classify a new data $x = \{x_1,\dots x_n\}$ we have 
+to compute for every class $c$
+$$
+p(x, y=c)=p(x \mid y=c) p(y=c)=\left(\prod_{i=1}^{n} p\left(x_i \mid y=c\right)\right) p(y=c)
+$$
+and choose the model that have the higher joint probability.
+
+On our classifier each pixel is is distributed according to a Beta distribution of 
+parameters $\alpha$, $\beta$
+$$
+p(x ; \alpha, \beta)=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha) \Gamma(\beta)} x^{\alpha-1}(1-x)^{\beta-1}
+$$
+with
+$$
+\begin{aligned}
+& \alpha=K E[X] \\
+& \beta=K(1-E[X]) \\
+& K=\frac{E[X](1-E[X])}{\operatorname{Var}(X)}-1
+\end{aligned}
+$$
+
 \subsection{k-nearest neighbors (k-NN)}
 
 Let's start by defining $P$ as the probability that a vector fall into a region $\mathcal{R}$
@@ -199,6 +234,151 @@ probability to the real density.
 Having said that, the k-nearest neighbors classifier to classify a new point looks for
 k nearest neighbors on the training set and classify the new point according to the 
 majority of the neighbors.
+
 \section{Implementation}
+All the code is written using python and Jupyter Notebook is also used to simply the 
+test of the code and the results visualisation.
+
+The following code is used to fetch the data from the dataset and randomly split it 
+in a 60000 training set and 10000 test set:
+
+\pagebreak
+\begin{python}[caption={Dataset fetch},label={lst:dataset-fetch}]
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+X,y = fetch_openml('mnist_784', version=1, return_X_y=True)
+y = y.astype(int)
+X = X/255
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, 
+            test_size=10000, random_state=42, shuffle=True)
+\end{python}
+
+Also, the following code is used to execute a 10 way cross validation to 
+optimize the parameters for each classifier:
+\begin{python}[caption={Cross Validation},label={lst:cross-validation}]
+from sklearn.model_selection import GridSearchCV
+
+X_train_cv = X_train[:10000]
+y_train_cv = y_train[:10000]
+
+
+model = Classifier()  # The instance of the classifier
+parameters = {}       # The map of parametor to be tuned
+
+        
+tuned_model = GridSearchCV(model, parameters, cv=10, verbose=0)
+tuned_model.fit(X_train_cv, y_train_cv.values.ravel())
+
+print ("Best Score: {:.3f}".format(tuned_model.best_score_) )
+print ("Best Params: ", tuned_model.best_params_)
+\end{python}
+
+For computational and time limits the dataset for cross validation has been reduced
+to 10000 elements.
+
+
+All the source code is attached to this report.
+
+\subsection{Support vector machine (SVM)}
+
+For SVM I used the \textbf{sklearn} library that implements the SVM classifier.
+
+The cross validation is used to perform the tuning of the parameter C of the SVM
+classifiers.
+
+\subsubsection{Linear kernel}
+
+The cross validation for the linear kernel classifier reveals (Figure \ref{fig:linear_cross}) that the best 
+value of the parameter C is 0.05.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.54]{linear_cross.png}
+    \caption{Linear kernel cross validation}
+    \label{fig:linear_cross}
+\end{figure}
+
+After that we can proceed with the training and test of the classifier 
+(Listing \ref{lst:svm_linear}).
+
+\begin{python}[caption={SVM linear kernel},label={lst:svm_linear}]
+from sklearn import svm
+
+#Create a svm Classifier with linear kernel
+clf = svm.SVC(C=0.05,kernel='linear') # 
+
+#Train the model using the training sets
+clf.fit(X_train, y_train)
+
+#Predict the response for test dataset
+y_pred = clf.predict(X_test)
+\end{python}
+    
+
+\subsubsection{Polynomial kernel}
+
+The cross validation for the polynomial kernel classifier reveals (Figure \ref{fig:poly_cross}) that the best 
+value of the parameter C is 5.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.54]{poly_cross.png}
+    \caption{Polynomial kernel cross validation}
+    \label{fig:poly_cross}
+\end{figure}
+
+After that we can proceed with the training and test of the classifier 
+(Listing \ref{lst:poly_linear}).
+
+\begin{python}[caption={SVM polynomial kernel},label={lst:poly_linear}]
+from sklearn import svm
+
+#Create a svm Classifier with polynomial kernel
+clf = svm.SVC(C=5,kernel='poly', degree=2)  # degree 2
+
+#Train the model using the training sets
+clf.fit(X_train, y_train)
+
+#Predict the response for test dataset
+y_pred = clf.predict(X_test)
+\end{python}
+
+\subsubsection{Radial Basis Function}
+The cross validation for the RBF kernel classifier reveals (Figure \ref{fig:rbf_cross}) that the best 
+value of the parameter C is 50.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.54]{rbf_cross.png}
+    \caption{RBF kernel cross validation}
+    \label{fig:rbf_cross}
+\end{figure}
+
+After that we can proceed with the training and test of the classifier 
+(Listing \ref{lst:poly_linear}).
+
+\begin{python}[caption={SVM RBF kernel},label={lst:rbf_linear}]
+from sklearn import svm
+
+#Create a svm Classifier RBF kernel
+clf = svm.SVC(C=50,kernel='rbf') 
+
+#Train the model using the training sets
+clf.fit(X_train, y_train)
+
+#Predict the response for test dataset
+y_pred = clf.predict(X_test)
+\end{python}
+
+
+\subsection{Random forests}
+For Random forests I the \textbf{sklearn} library that implements the random 
+forests classifier.
+The cross validation is used to perform the tuning of the number of tree C in the 
+forest.
+
+\subsection{Naive Bayes classifier}
+\subsection{k-nearest neighbors (k-NN)}
 
 \end{document}
