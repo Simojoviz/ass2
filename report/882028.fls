@@ -128,6 +128,8 @@ INPUT /home/simojoviz/uni/magistrale/ai/ass2/report/./images/rf_cross.png
 INPUT ./images/rf_cross.png
 INPUT ./images/rf_cross.png
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmtt12.tfm
+INPUT /usr/share/texlive/texmf-dist/tex/latex/base/omlcmr.fd
+INPUT /usr/share/texlive/texmf-dist/tex/latex/base/omlcmr.fd
 INPUT /home/simojoviz/uni/magistrale/ai/ass2/report/./images/knn_cross.png
 INPUT ./images/knn_cross.png
 INPUT ./images/knn_cross.png

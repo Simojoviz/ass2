@@ -403,6 +403,92 @@ y_pred = clf.predict(X_test)
 
 \subsection{Naive Bayes classifier}
 
+For the Naive Bayes classifier we have to implement it by ourself.
+
+The \verb|fit(self, X_train, y_train)| method(Listing \ref{lst:fit_naive}) creates 
+the models for every class of the
+training set ($[0 \dots 9]$) using the beta distribution; it's calculate the means
+and the variances of the features of the data on the training set. After that it
+calculates all the parameters needed to define the beta distribution, that models the 
+class, and then to calculates the joint pribabilities.
+
+\begin{python}[caption={Naive Bayes fit method},label={lst:fit_naive}]
+def fit(self, X_train, y_train):
+    self.X_train = X_train
+    self.y_train = y_train
+    self.alphas = [None] * 10
+    self.betas = [None] * 10
+    self.p_class = [None] * 10
+
+    for c in range(10):
+        x_class_n = self.X_train[self.y_train == c]
+
+        means = np.mean(x_class_n, axis=0)
+        variances = np.var(x_class_n, axis=0)            
+        
+        ks = ((means * (1 - means)) / variances) - 1
+        alphas = ks * means
+        betas = ks * (1 - means)
+
+        n_y_class_c = len(self.y_train[self.y_train == c])
+
+        p_class = n_y_class_c / len(self.y_train)
+
+        self.alphas[c] = np.array(alphas)
+        self.betas[c] = np.array(betas)
+        self.p_class[c] = np.array(p_class)
+\end{python}
+
+The \verb|predict(self, X)| method for every new point to be classified, it retrive
+the parameters computed by the \verb|fit| method for every single class and the in 
+order to calculate the joint distributions it firstly calculates the $p(x_i|y=c)$ 
+probabilities using the beta distribution. 
+
+Since the beta distribution is a continuous
+distribution is not possible to calculate $p(x_i|y=c)$, so I decided to calculate
+the probability on a small neighbourhood of $x_i$, $p( x_i-0.05<x_i<x_i+0.05 | y=c)$ 
+(I've choosen the value 0.05 after some tests). 
+The computation of the beta probabilities in some cases can produce NaN as results, 
+in this cases I've simply replaced the NaN values with 1 so that in the computation
+of the joint distribution they are ignored.
+
+After having calculated the joint probabilities for every single class, the 
+\verb|predict| method selects the class with the higher one.
+
+\begin{python}[caption={Random forests},label={lst:random_forests}]
+def predict(self, X):
+
+    predict = np.array([])
+
+    for index, row in X.iterrows():
+
+        p = 0
+        _class = None
+        row = np.array(row)
+
+        for c in range(10):
+
+            alphas = self.alphas[c]
+            betas = self.betas[c]
+            p_class = self.p_class[c]
+            
+            betas_plus = beta.cdf(row+0.05, alphas, betas)
+            betas_minus = beta.cdf(row-0.05, alphas, betas)
+            beta_probs = betas_plus - betas_minus
+            
+            np.nan_to_num(beta_probs, copy=False, nan=1.0)
+            p_temp = np.product(beta_probs) * p_class
+            
+
+            if p_temp >= p:
+                p = p_temp
+                _class = c
+        
+        predict = np.append(predict, _class)
+    
+    return predict
+\end{python}
+
 
 \subsection{k-nearest neighbors (k-NN)}
 
