@@ -82,37 +82,37 @@ the Naive Bayes and k-NN classifiers.
 
 Let's start by defining what is \textbf{supervised learning}: given a set of example
 input and output  pairs find a function that that does a good job of predicting the
-the output associated to a new input. 
-Having said that all classifiers that we will see in this report are supervised 
+output associated to a new input. 
+Having said that, all classifiers that we will see in this report are supervised 
 learning models.
 
-A classifier needs to be trained on a dataset to be able to predicting, in the best
+A classifier needs to be trained on a dataset to be able to predict, in the best
 possible way, the output of new data (classification). 
 On large datasets the data is split in two parts:
 \begin{itemize}
     \item \textbf{Tainig set}, to train the classifier;
-    \item \textbf{Test set}, to test how accurate are the prediction of the classifier
+    \item \textbf{Test set}, to test how accurate are the predictions of the classifier
             over new data.
 \end{itemize}
 
 During the training process the classifier don't have to fit the training date 
-too precisely because this can lead to bad results on new data, this problem is konwn
+too precisely, because this can lead to bad results on new data, this problem is konwn
 as \textbf{overfitting}. 
 
 \subsection{Support vector machine (SVM)}
 
-If a data set can be split by linear separator the data space is called
+If a dataset can be split by a linear separator the data space is called
 \textbf{linear separable}, when we faced a non-linearly-separable dataset we can take
 two approaches:
 \begin{enumerate}
-    \item Use a more complex separator;
-    \item Use a linear saparator and accept some errors.
+    \item use a more complex separator;
+    \item use a linear saparator and accept some errors.
 \end{enumerate}
 
-Support vector machine perform a linear classification, but with trick called 
-\textbf{kernel trick} it can also perform non-linear classification.
+Support vector machine performs a linear classification, but with a trick called 
+\textbf{kernel trick} it can also performs non-linear classification.
 
-In general, there can be multiple separators for a data set, a natural choise, and
+In general, there can be multiple separators for a dataset, a natural choise, and
 the one adopted by SVM, is to choose the one with the largest geometric margin.
 
 In the case of a "nearly" separable dataset we may be willing to have a separator
@@ -123,10 +123,10 @@ to correctly classify
 all the data set, a lower value of C instead allows more easily a 
 misclassification of the point to achive a better margin.
 
-On non-linearly-separable dataset if we trandform the feature values of the points
+On non-linearly-separable dataset if we transform the feature values of the points
 inside the dataset in a non-linear way, we can trandform the dataset into one that
-is linearly separable. To adapt the dataset to the now feature space is used a
-function $\phi(x)$, the $\phi$ function can map the values of the dataset also to 
+is linearly separable. To adapt the dataset to the new feature space a function 
+$\phi(x)$ is used, the $\phi$ function can map the values of the dataset also to 
 an higher-dimentional space and it can do a non-linear transformation.
 
 Since SVM only use a dot product of the data
@@ -155,10 +155,10 @@ Decision trees can be seen as rules to perform categorization, but how to create
 good decision tree that makes corrects categorization of new data? The main
 problem is to decide which node put in which position. This problem can be easily
 solved using an alghorithm like the ID3 Alghorithm, that using a measure 
-called Information Gain it decides which node to put next on the tree.
+called \textbf{Information Gain} it decides which node to put next on the tree.
 
-Decision trees after the training can be perfectly fit the given dataset but may
-not be so accurate to classify new data, so there maight be overfitting.
+Decision trees after the training can perfectly fit the given dataset but may
+not be so accurate to classify new data, so there may be overfitting.
 The Random forests solves this problem by constructing a multitude of 
 decision tree during the training.
 
@@ -169,8 +169,7 @@ associated decision trees. Having this set of decision trees, the predictions of
 classifier is the average of the predictions of the various decision trees.
 
 The training alghorithm for random forests follows the 
-Bagging procedure but with a small difference; the 
-alghorithm each time a split is to be performed, only a random subset of features is
+Bagging procedure but with a small difference; each time a split is to be performed, only a random subset of features is
 selected to create the associated decision tree. 
 
 \subsection{Naive Bayes classifier}
@@ -180,20 +179,20 @@ The Naive Bayes classifier have a \textbf{generative} approach instead of a
 so this classifier given a training set tries to create models that represents the
 various classes.
  
-To classify a new data we match the date with all the models then see which model 
+To classify a new data we match the date with all the models, then see which model 
 represents better the new data.
 
 In more formal therms, \textbf{discriminative} algorithms try to learn $p(y|x)$, 
 instead \textbf{generative} algorithms try to model $p(x|y)$ and $p(y)$.
 
-With a Naive Bayes classifier to classify a new data $x = \{x_1,\dots x_n\}$ we have 
+With a Naive Bayes classifier, to classify a new data $x = \{x_1,\dots x_n\}$ we have 
 to compute for every class $c$
 $$
 p(x, y=c)=p(x \mid y=c) p(y=c)=\left(\prod_{i=1}^{n} p\left(x_i \mid y=c\right)\right) p(y=c)
 $$
 and choose the model that have the higher joint probability.
 
-On our classifier each pixel is is distributed according to a Beta distribution of 
+On our classifier each pixel is distributed according to a Beta distribution of 
 parameters $\alpha$, $\beta$
 $$
 p(x ; \alpha, \beta)=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha) \Gamma(\beta)} x^{\alpha-1}(1-x)^{\beta-1}
@@ -213,13 +212,13 @@ Let's start by defining $P$ as the probability that a vector fall into a region 
 $$
     P=\int_{\mathcal{R}} p(x) d x
 $$
-if we assume that $\mathcal{R}$ is so small that $p(x)$ doesn't vary so much inside it,
+if we assume that $\mathcal{R}$ is small enough that $p(x)$ doesn't vary so much inside it,
 we can redefine $P$ as
 $$
     P=\int_{\mathcal{R}} p(x) d x \approx p(x) \int_{\mathcal{R}} d x=p(x)|\mathcal{R}|
 $$
-after a Monte Carlo estimation of the probability $P = \frac{k}{n}$ as the proportion
-of vectors ($k$) of the sample ($n$) fall within $\mathcal{R}$ the have that
+After a Monte Carlo estimation of the probability $P = \frac{k}{n}$ as the proportion
+of vectors ($k$) of the sample ($n$) fall within $\mathcal{R}$ we have that
 $$
     p(x) = \frac{k/n}{|\mathcal{R}|}
 $$
@@ -231,7 +230,7 @@ $$
 we have that for each point the nearest neighbor estimator converges in
 probability to the real density.
 
-Having said that, the k-nearest neighbors classifier to classify a new point looks for
+Having said that, the k-nearest neighbors classifier, to classify a new point, looks for
 k nearest neighbors on the training set and classify the new point according to the 
 majority of the neighbors.
 
@@ -373,7 +372,7 @@ y_pred = clf.predict(X_test)
 
 
 \subsection{Random forests}
-For Random forests I the \textbf{sklearn} library that implements the random 
+For Random forests I used the \textbf{sklearn} library that implements the random 
 forests classifier.
 The cross validation is used to perform the tuning of the number of trees in the 
 forest and it reveals (Figure \ref{fig:rf_cross}) that the optimum number of trees in the forest is 500.
@@ -410,7 +409,7 @@ the models for every class of the
 training set ($[0 \dots 9]$) using the beta distribution; it's calculate the means
 and the variances of the features of the data on the training set. After that it
 calculates all the parameters needed to define the beta distribution, that models the 
-class, and then to calculates the joint pribabilities.
+class, and to calculates the joint pribabilities.
 
 \begin{python}[caption={Naive Bayes fit method},label={lst:fit_naive}]
 def fit(self, X_train, y_train):
@@ -439,23 +438,23 @@ def fit(self, X_train, y_train):
         self.p_class[c] = np.array(p_class)
 \end{python}
 
-The \verb|predict(self, X)| method (Listing \ref{lst:predict_naive}) for every new 
-point to be classified, it retrive
-the parameters computed by the \verb|fit| method for every single class and the in 
-order to calculate the joint distributions it firstly calculates the $p(x_i|y=c)$ 
+The \verb|predict(self, X)| method (Listing \ref{lst:predict_naive}) retrives
+the parameters computed by the \verb|fit| method for every single class and then in 
+order to calculate the joint distributions it calculates the $p(x_i|y=c)$ 
 probabilities using the beta distribution. 
 
 Since the beta distribution is a continuous
 distribution is not possible to calculate $p(x_i|y=c)$, so I decided to calculate
 the probability on a small neighbourhood of $x_i$, $p( x_i-0.05<x_i<x_i+0.05 | y=c)$ 
 (I've choosen the value 0.05 after some tests). 
-The computation of the beta probabilities in some cases can produce NaN as results, 
+The computation of the beta probabilities in some cases can produce NaN as result, 
 in this cases I've simply replaced the NaN values with 1 so that in the computation
 of the joint distribution they are ignored.
 
 After having calculated the joint probabilities for every single class, the 
-\verb|predict| method selects the class with the higher one.
+\verb|predict| method selects the class with the higher joint probability.
 
+\pagebreak
 \begin{python}[caption={Naive Bayes fit method},label={lst:predict_naive}]
 def predict(self, X):
 
@@ -490,9 +489,9 @@ def predict(self, X):
     return predict
 \end{python}
 
-On this Naive Bayes classifier there are non parameters to be tuned so we can simply
+On this Naive Bayes classifier there are no parameters to be tuned so we can simply
 proceed with the training and test of the classifier (Label \ref{lst:naive_bayes}).
-
+\pagebreak
 \begin{python}[caption={Naive Bayes classifier},label={lst:naive_bayes}]
     #Create a Naive Bayes Classifier
     clf = beta_NaiveBayes() 
@@ -509,8 +508,8 @@ proceed with the training and test of the classifier (Label \ref{lst:naive_bayes
 For the k-NN we have to implement it by ourself. 
 
 First of all the \verb|fit(self, X_train, y_train)| (Listing \ref{lst:knn_fit}) 
-is implemented in the simply
-by save the training set as numpy arrays.
+is implemented simply
+by saving the training set as numpy arrays.
 
 \begin{python}[caption={k-NN fit method},label={lst:knn_fit}]
 def fit(self, X_train, y_train):
@@ -521,10 +520,11 @@ def fit(self, X_train, y_train):
 Then let's define the method \verb|predict(self, X)| (Listing \ref{lst:knn_predict}) 
 to classify new data; it simply iterates through every single point in input and 
 with the help of the \verb|__supp| private method it finds the distance to every 
-points on the training set and selects the classes of k nearest point. 
+points on the training set and selects the classes of the k nearest points. 
 After that with the \verb|statistics.mode| function it selects the most common 
 class on the k selected.
 
+\pagebreak
 \begin{python}[caption={k-NN predict method},label={lst:knn_predict}]
 def __supp(self, x):
     distances = np.linalg.norm(x - self.X_train, axis=1)
@@ -544,7 +544,7 @@ def predict(self, X):
 \end{python}
 
 The cross validation is used to perform the tuning of the number of neighbors to take
-in condideration and it reveals () that the optimum number of neighbors is 5.
+in condideration and it reveals (Figure \ref{fig:knn_cross}) that the optimum number of neighbors is 5.
 
 \begin{figure}[H]
     \centering
@@ -573,20 +573,20 @@ In the table \ref{tbl:classifiers_comparison} is shown a comparison between all 
 classifier on this report.
 
 As we can see all the SVM classifiers have similar computational (time) requirements
-both on cross validation, training and test time. The polynomial and RBF kernel 
-classifiers seem to have a higher accuracy on the prediction on the training set with 
-, as already said, similar computational requirements than the linear kernel 
+on cross validation, training and test time. The polynomial and RBF kernel 
+classifiers seem to have an higher accuracy on the prediction on the training set with 
+,as already said, similar computational requirements than the linear kernel 
 classifier.
 
 The random forests classifiers seems to have slightly less accuracy than the SVM
 classifiers and a similar training time, the prediction time instead is way smaller
-than the SVM ones. After that made a test reducing to 200 the number of trees in the 
+than the SVM ones. I've also made a test reducing to 200 the number of trees in the 
 forest to see how the performance changes; as expected, because of the cross 
 validation, the accuracy is smaller but by
-a very small amount, 0.9681 for the 200 trees forests againt 0.6816 against the 500 
-trees forest. However on the performance side the training time decrease significally
-to 57 seconds against the 2 minutes and 22 seconds of the 500 trees forest, so for 
-this reason it maight be convinient use the classifier with the 200 trees forest. 
+a very small amount, 0.9681 for the 200 trees forests againt 0.9686 for the 500 
+trees forest. However on the performance side the training time decreases significally
+to 57 seconds, against the 2 minutes and 22 seconds of the 500 trees forest; so for 
+this reason it may be convenient to use the classifier with the 200 trees forest. 
 
 \begin{table}[H]
    \begin{center}
