@@ -439,7 +439,8 @@ def fit(self, X_train, y_train):
         self.p_class[c] = np.array(p_class)
 \end{python}
 
-The \verb|predict(self, X)| method for every new point to be classified, it retrive
+The \verb|predict(self, X)| method (Listing \ref{lst:predict_naive}) for every new 
+point to be classified, it retrive
 the parameters computed by the \verb|fit| method for every single class and the in 
 order to calculate the joint distributions it firstly calculates the $p(x_i|y=c)$ 
 probabilities using the beta distribution. 
@@ -455,7 +456,7 @@ of the joint distribution they are ignored.
 After having calculated the joint probabilities for every single class, the 
 \verb|predict| method selects the class with the higher one.
 
-\begin{python}[caption={Random forests},label={lst:random_forests}]
+\begin{python}[caption={Naive Bayes fit method},label={lst:predict_naive}]
 def predict(self, X):
 
     predict = np.array([])
@@ -489,6 +490,19 @@ def predict(self, X):
     return predict
 \end{python}
 
+On this Naive Bayes classifier there are non parameters to be tuned so we can simply
+proceed with the training and test of the classifier (Label \ref{lst:naive_bayes}).
+
+\begin{python}[caption={Naive Bayes classifier},label={lst:naive_bayes}]
+    #Create a Naive Bayes Classifier
+    clf = beta_NaiveBayes() 
+
+    #Train the model using the training sets
+    clf.fit(X_train, y_train)
+    
+    #Predict the response for test dataset
+    y_pred = clf.predict(X_test)
+\end{python}
 
 \subsection{k-nearest neighbors (k-NN)}
 
@@ -540,9 +554,9 @@ in condideration and it reveals () that the optimum number of neighbors is 5.
 \end{figure}
 
 After having implemented the k-NN classifier we can proceed with the training and 
-test of the classifier.
+test of the classifier (Listing \ref{lst:knn}).
 
-\begin{python}[caption={k-NN predict method},label={lst:knn_predict}]
+\begin{python}[caption={k-NN},label={lst:knn}]
 #Create a k-NN Classifier
 clf = knn(k=5) 
 
@@ -554,6 +568,45 @@ y_pred = clf.predict(X_test)
 \end{python}
 
 \section{Considerations}
+
+In the table \ref{tbl:classifiers_comparison} is shown a comparison between all the 
+classifier on this report.
+
+As we can see all the SVM classifiers have similar computational (time) requirements
+both on cross validation, training and test time. The polynomial and RBF kernel 
+classifiers seem to have a higher accuracy on the prediction on the training set with 
+, as already said, similar computational requirements than the linear kernel 
+classifier.
+
+The random forests classifiers seems to have slightly less accuracy than the SVM
+classifiers and a similar training time, the prediction time instead is way smaller
+than the SVM ones. After that made a test reducing to 200 the number of trees in the 
+forest to see how the performance changes; as expected, because of the cross 
+validation, the accuracy is smaller but by
+a very small amount, 0.9681 for the 200 trees forests againt 0.6816 against the 500 
+trees forest. However on the performance side the training time decrease significally
+to 57 seconds against the 2 minutes and 22 seconds of the 500 trees forest, so for 
+this reason it maight be convinient use the classifier with the 200 trees forest. 
+
+\begin{table}[H]
+   \begin{center}
+             \begin{tabular}{||c | c | c | c | c ||}
+             \hline
+             Classifier & Accuracy & CV time  & Training time & Test time  \\ [0.5ex]
+             \hline
+             SVM linear  & 0.9429 & 2m 2s & 2m 8s & 41s\\ [1ex]
+             SVM poly  & 0.9802 & 2m 34s & 1m 52s & 31s\\ [1ex]
+             SVM RBF  & 0.9820 & 3m 26s & 2m 22s & 54s\\ [1ex]
+             Random forests  & 0.9686 & 9m 51s & 2m 20s & 1.3s\\ [1ex]
+             Naive Bayes classifier  & 0.8399 & - & 0.4s & 43s\\ [1ex]
+             k-NN  & 0.9719 & 11m 49s & 0.8s & 27m 12s\\ [1ex]
+             \hline
+             \end{tabular}
+             \caption{Classifiers comparison}
+             \label{tbl:classifiers_comparison}
+   \end{center}
+\end{table}
+   
 
 
 \end{document}
