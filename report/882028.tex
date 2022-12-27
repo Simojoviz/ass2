@@ -224,7 +224,7 @@ $$
     p(x) = \frac{k/n}{|\mathcal{R}|}
 $$
 Now assume k to be constant and enlarge the window until we find enough samples, if
-we let the number of neighbors $k(n)$  grows to innfinity more slowly than n
+we let the number of neighbors $k(n)$  grows to infinity more slowly than n
 $$
     \lim _{n \rightarrow \infty} \frac{k(n)}{n}=0
 $$
@@ -375,10 +375,99 @@ y_pred = clf.predict(X_test)
 \subsection{Random forests}
 For Random forests I the \textbf{sklearn} library that implements the random 
 forests classifier.
-The cross validation is used to perform the tuning of the number of tree C in the 
-forest.
+The cross validation is used to perform the tuning of the number of trees in the 
+forest and it reveals (Figure \ref{fig:rf_cross}) that the optimum number of trees in the forest is 500.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.54]{rf_cross.png}
+    \caption{RBF kernel cross validation}
+    \label{fig:rf_cross}
+\end{figure}
+
+So we can proceed with the training and test of the classifier 
+(Listing \ref{lst:random_forests}).
+
+\begin{python}[caption={Random forests},label={lst:random_forests}]
+from sklearn import svm
+
+#Create a random forests Classifier
+clf=RandomForestClassifier(n_estimators=500)
+
+#Train the model using the training sets
+clf.fit(X_train, y_train)
+
+#Predict the response for test dataset
+y_pred = clf.predict(X_test)
+\end{python}
 
 \subsection{Naive Bayes classifier}
+
+
 \subsection{k-nearest neighbors (k-NN)}
+
+For the k-NN we have to implement it by ourself. 
+
+First of all the \verb|fit(self, X_train, y_train)| (Listing \ref{lst:knn_fit}) 
+is implemented in the simply
+by save the training set as numpy arrays.
+
+\begin{python}[caption={k-NN fit method},label={lst:knn_fit}]
+def fit(self, X_train, y_train):
+    self.X_train = np.array(X_train)
+    self.y_train = np.array(y_train)
+\end{python}
+
+Then let's define the method \verb|predict(self, X)| (Listing \ref{lst:knn_predict}) 
+to classify new data; it simply iterates through every single point in input and 
+with the help of the \verb|__supp| private method it finds the distance to every 
+points on the training set and selects the classes of k nearest point. 
+After that with the \verb|statistics.mode| function it selects the most common 
+class on the k selected.
+
+\begin{python}[caption={k-NN predict method},label={lst:knn_predict}]
+def __supp(self, x):
+    distances = np.linalg.norm(x - self.X_train, axis=1)
+    neighbors_y = self.y_train[np.argsort(distances)[:self.k]]
+
+    return statistics.mode(neighbors_y)
+
+
+def predict(self, X):
+    X = np.array(X)
+    predict = np.array([])
+
+    for x in X:
+        predict = np.append(predict, self.__supp(x))
+
+    return predict
+\end{python}
+
+The cross validation is used to perform the tuning of the number of neighbors to take
+in condideration and it reveals () that the optimum number of neighbors is 5.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.6]{knn_cross.png}
+    \caption{k-NN cross validation}
+    \label{fig:knn_cross}
+\end{figure}
+
+After having implemented the k-NN classifier we can proceed with the training and 
+test of the classifier.
+
+\begin{python}[caption={k-NN predict method},label={lst:knn_predict}]
+#Create a k-NN Classifier
+clf = knn(k=5) 
+
+#Train the model using the training sets
+clf.fit(X_train, y_train)
+
+#Predict the response for test dataset
+y_pred = clf.predict(X_test)
+\end{python}
+
+\section{Considerations}
+
 
 \end{document}
